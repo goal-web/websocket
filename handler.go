@@ -21,14 +21,18 @@ func New(controller contracts.WebSocketController) interface{} {
 			return err
 		}
 
-		if err = controller.OnConnect(request); err != nil {
+		var fd = socket.GetFd()
+
+		if err = controller.OnConnect(request, fd); err != nil {
 			logs.WithError(err).Error("websocket.New: OnConnect failed")
 			return err
 		}
 
-		var conn = NewConnection(ws)
+		var conn = NewConnection(ws, fd)
 		socket.Add(conn)
+
 		defer func() {
+			controller.OnClose(fd)
 			if closeErr := socket.Close(conn.Fd()); closeErr != nil {
 				logs.WithError(closeErr).Error("websocket.New: Connection close failed")
 			}
@@ -36,7 +40,7 @@ func New(controller contracts.WebSocketController) interface{} {
 
 		for {
 			// Read
-			msgType, msg, readErr := ws.ReadMessage()
+			var msgType, msg, readErr = ws.ReadMessage()
 			if readErr != nil {
 				logs.WithError(readErr).Error("websocket.New: Failed to read message")
 				return readErr
@@ -46,7 +50,7 @@ func New(controller contracts.WebSocketController) interface{} {
 			case websocket.TextMessage, websocket.BinaryMessage:
 				go handleMessage(NewFrame(msg, conn, serializer), controller, handler)
 			case websocket.CloseMessage:
-				_ = socket.Close(conn.Fd())
+				return nil
 			}
 		}
 	}

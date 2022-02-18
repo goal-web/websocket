@@ -12,16 +12,12 @@ type Connection struct {
 	mutex sync.Mutex
 }
 
-func NewConnection(ws *websocket.Conn) contracts.WebSocketConnection {
+func NewConnection(ws *websocket.Conn, fd uint64) contracts.WebSocketConnection {
 	return &Connection{
-		fd:    0,
+		fd:    fd,
 		ws:    ws,
 		mutex: sync.Mutex{},
 	}
-}
-
-func (conn *Connection) SetFd(fd uint64) {
-	conn.fd = fd
 }
 
 func (conn *Connection) Fd() uint64 {

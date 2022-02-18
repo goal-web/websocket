@@ -15,7 +15,8 @@ func (s ServiceProvider) Register(application contracts.Application) {
 		upgrader = wsConfig.Upgrader
 
 		return &WebSocket{
-			mutex:       sync.RWMutex{},
+			connMutex:   sync.Mutex{},
+			fdMutex:     sync.Mutex{},
 			connections: map[uint64]contracts.WebSocketConnection{},
 			count:       0,
 		}

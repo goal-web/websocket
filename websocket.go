@@ -11,26 +11,31 @@ var (
 )
 
 type WebSocket struct {
-	mutex       sync.RWMutex
+	fdMutex     sync.Mutex
+	connMutex   sync.Mutex
 	connections map[uint64]contracts.WebSocketConnection
 	count       uint64
 }
 
 func (ws *WebSocket) Add(connect contracts.WebSocketConnection) {
-	ws.mutex.Lock()
-	defer ws.mutex.Unlock()
+	ws.connMutex.Lock()
+	defer ws.connMutex.Unlock()
+	ws.connections[connect.Fd()] = connect
+}
 
+func (ws *WebSocket) GetFd() uint64 {
+	ws.fdMutex.Lock()
+	defer ws.fdMutex.Unlock()
 	ws.count++
 	var fd = ws.count
-	ws.connections[fd] = connect
-	connect.SetFd(fd)
+	return fd
 }
 
 func (ws *WebSocket) Close(fd uint64) error {
 	var conn, exists = ws.connections[fd]
 	if exists {
-		ws.mutex.Lock()
-		defer ws.mutex.Unlock()
+		ws.connMutex.Lock()
+		defer ws.connMutex.Unlock()
 		delete(ws.connections, fd)
 		return conn.Close()
 	}

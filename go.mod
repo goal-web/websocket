@@ -3,7 +3,7 @@ module github.com/goal-web/websocket
 go 1.17
 
 require (
-	github.com/goal-web/contracts v0.1.47
+	github.com/goal-web/contracts v0.1.48
 	github.com/goal-web/http v0.1.6
 	github.com/goal-web/supports v0.1.12
 	github.com/gorilla/websocket v1.5.0
