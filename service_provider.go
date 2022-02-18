@@ -9,7 +9,11 @@ type ServiceProvider struct {
 }
 
 func (s ServiceProvider) Register(application contracts.Application) {
-	application.Singleton("websocket", func() contracts.WebSocket {
+	application.Singleton("websocket", func(config contracts.Config) contracts.WebSocket {
+		var wsConfig = config.Get("websocket").(Config)
+
+		upgrader = wsConfig.Upgrader
+
 		return &WebSocket{
 			mutex:       sync.RWMutex{},
 			connections: map[uint64]contracts.WebSocketConnection{},

@@ -9,12 +9,12 @@ import (
 )
 
 var (
-	upgrade = websocket.Upgrader{}
+	upgrader = websocket.Upgrader{}
 )
 
 func New(controller contracts.WebSocketController) interface{} {
 	return func(request *http.Request, serializer contracts.Serializer, socket contracts.WebSocket, handler contracts.ExceptionHandler) error {
-		var ws, err = upgrade.Upgrade(request.Context.Response(), request.Request(), nil)
+		var ws, err = upgrader.Upgrade(request.Context.Response(), request.Request(), nil)
 
 		if err != nil {
 			logs.WithError(err).Error("websocket.New: Upgrade failed")
