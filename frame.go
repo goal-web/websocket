@@ -30,6 +30,6 @@ func (frame *Frame) RawString() string {
 	return string(frame.raw)
 }
 
-func (frame *Frame) Parse(v interface{}) error {
+func (frame *Frame) Parse(v any) error {
 	return frame.serializer.Unserialize(frame.RawString(), v)
 }

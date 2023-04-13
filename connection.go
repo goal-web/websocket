@@ -28,7 +28,7 @@ func (conn *Connection) Close() error {
 	return conn.ws.Close()
 }
 
-func (conn *Connection) Send(message interface{}) error {
+func (conn *Connection) Send(message any) error {
 	conn.mutex.Lock()
 	defer conn.mutex.Unlock()
 	return conn.ws.WriteJSON(message)

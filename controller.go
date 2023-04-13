@@ -4,7 +4,7 @@ import (
 	"github.com/goal-web/contracts"
 )
 
-func Default(handler func(frame contracts.WebSocketFrame)) interface{} {
+func Default(handler func(frame contracts.WebSocketFrame)) any {
 	return New(&DefaultController{Handler: handler})
 }
 

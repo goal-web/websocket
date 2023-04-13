@@ -8,7 +8,11 @@ import (
 type ServiceProvider struct {
 }
 
-func (s ServiceProvider) Register(application contracts.Application) {
+func NewService() contracts.ServiceProvider {
+	return &ServiceProvider{}
+}
+
+func (provider ServiceProvider) Register(application contracts.Application) {
 	application.Singleton("websocket", func(config contracts.Config) contracts.WebSocket {
 		var wsConfig = config.Get("websocket").(Config)
 
@@ -23,9 +27,9 @@ func (s ServiceProvider) Register(application contracts.Application) {
 	})
 }
 
-func (s ServiceProvider) Start() error {
+func (provider ServiceProvider) Start() error {
 	return nil
 }
 
-func (s ServiceProvider) Stop() {
+func (provider ServiceProvider) Stop() {
 }

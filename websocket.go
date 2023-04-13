@@ -43,7 +43,7 @@ func (ws *WebSocket) Close(fd uint64) error {
 	return ConnectionDontExistsErr
 }
 
-func (ws *WebSocket) Send(fd uint64, message interface{}) error {
+func (ws *WebSocket) Send(fd uint64, message any) error {
 	var conn, exists = ws.connections[fd]
 	if exists {
 		return conn.Send(message)

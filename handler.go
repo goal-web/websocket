@@ -12,7 +12,7 @@ var (
 	upgrader = websocket.Upgrader{}
 )
 
-func New(controller contracts.WebSocketController) interface{} {
+func New(controller contracts.WebSocketController) any {
 	return func(request *http.Request, serializer contracts.Serializer, socket contracts.WebSocket, handler contracts.ExceptionHandler) error {
 		var ws, err = upgrader.Upgrade(request.Context.Response(), request.Request(), nil)
 
@@ -60,10 +60,7 @@ func handleMessage(frame contracts.WebSocketFrame, controller contracts.WebSocke
 	defer func() {
 		if panicValue := recover(); panicValue != nil {
 			handler.Handle(Exception{
-				Exception: exceptions.WithRecover(panicValue, contracts.Fields{
-					"msg": frame.RawString(),
-					"fd":  frame.Connection().Fd(),
-				}),
+				Exception: exceptions.WithRecover(panicValue),
 			})
 		}
 	}()
